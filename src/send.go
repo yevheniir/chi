@@ -9,7 +9,7 @@ func Send(s string) {
 	fmt.Println(s)
 }
 
-func GetTCPSender(c net.Conn) func(string) error {
+func GetSender(c net.Conn) func(string) error {
 
 	return func(s string) error {
 		// defer c.Close()

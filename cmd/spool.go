@@ -38,16 +38,17 @@ to quickly create a Cobra application.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		c, err := net.Dial("tcp", args[1])
+		c, err := net.Dial(args[1], args[2])
 		if err != nil {
 			fmt.Printf("Oh nooo: %v\n", err)
 			return
 		}
 		defer c.Close()
 
-		sender := src.GetTCPSender(c)
+		sender := src.GetSender(c)
+		genMessage := src.GetMsgGenerator(args[1])
 
-		src.ScanAndSend(args[0], sender)
+		src.ScanAndSend(args[0], sender, genMessage)
 
 	},
 }
@@ -56,6 +57,9 @@ func init() {
 	rootCmd.AddCommand(spoolCmd)
 	spoolCmd.PersistentFlags().StringVarP(&Path, "path", "p", "/spool.spool", "Path to spool file")
 	spoolCmd.MarkFlagRequired("path")
+
+	spoolCmd.PersistentFlags().StringVarP(&Path, "protocol", "d", "tcp", "Protocol")
+	spoolCmd.MarkFlagRequired("address")
 
 	spoolCmd.PersistentFlags().StringVarP(&Path, "address", "a", "localhost:2003", "Network path")
 	spoolCmd.MarkFlagRequired("address")
