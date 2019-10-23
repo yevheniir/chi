@@ -17,7 +17,9 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"net"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yevheniir/nanachi/src"
@@ -37,6 +39,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		startTime := time.Now()
 		protocol, _ := cmd.Flags().GetString("protocol")
 		address, _ := cmd.Flags().GetString("address")
 
@@ -50,7 +53,12 @@ to quickly create a Cobra application.`,
 		sender := src.GetSender(c)
 		genMessage := src.GetMsgGenerator(protocol)
 
-		src.ScanAndSend(args[0], sender, genMessage)
+		count := src.ScanAndSend(args[0], sender, genMessage)
+
+		elapsed := time.Since(startTime)
+		time := float32(float32(elapsed) / float32(time.Second))
+		log.Printf("Time spended: %s", elapsed)
+		log.Printf("Metric puts/s: %f", float32(count)/time)
 
 	},
 }

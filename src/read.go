@@ -6,8 +6,9 @@ import (
 	"os"
 )
 
-func ScanAndSend(path string, send Sender, gen msgGenerator) {
+func ScanAndSend(path string, send Sender, gen msgGenerator) int {
 	file, err := os.Open(path)
+	count := 0
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -16,6 +17,12 @@ func ScanAndSend(path string, send Sender, gen msgGenerator) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
+		count++
+
+		if count%10000 == 0 {
+			log.Printf("Sended: %d lines", count)
+		}
+
 		err = send(gen(scanner.Text()))
 
 		if err != nil {
@@ -26,4 +33,5 @@ func ScanAndSend(path string, send Sender, gen msgGenerator) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+	return count
 }
