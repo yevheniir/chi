@@ -37,8 +37,10 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		protocol, _ := cmd.Flags().GetString("protocol")
+		address, _ := cmd.Flags().GetString("address")
 
-		c, err := net.Dial(args[1], args[2])
+		c, err := net.Dial(protocol, address)
 		if err != nil {
 			fmt.Printf("Oh nooo: %v\n", err)
 			return
@@ -46,7 +48,7 @@ to quickly create a Cobra application.`,
 		defer c.Close()
 
 		sender := src.GetSender(c)
-		genMessage := src.GetMsgGenerator(args[1])
+		genMessage := src.GetMsgGenerator(protocol)
 
 		src.ScanAndSend(args[0], sender, genMessage)
 
@@ -55,14 +57,12 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(spoolCmd)
-	spoolCmd.PersistentFlags().StringVarP(&Path, "path", "p", "/spool.spool", "Path to spool file")
+	spoolCmd.PersistentFlags().StringP("path", "p", "/spool.spool", "Path to spool file")
 	spoolCmd.MarkFlagRequired("path")
 
-	spoolCmd.PersistentFlags().StringVarP(&Path, "protocol", "d", "tcp", "Protocol")
-	spoolCmd.MarkFlagRequired("address")
+	spoolCmd.Flags().StringP("protocol", "r", "tcp", "Protocol")
 
-	spoolCmd.PersistentFlags().StringVarP(&Path, "address", "a", "localhost:2003", "Network path")
-	spoolCmd.MarkFlagRequired("address")
+	spoolCmd.Flags().StringP("address", "a", "localhost:2003", "Network path")
 
 	// Here you will define your flags and configuration settings.
 
