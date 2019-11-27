@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/yevheniir/nanachi/cmd"
+import "github.com/yevheniir/chi/cmd"
 
 func main() {
 	cmd.Execute()

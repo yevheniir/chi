@@ -17,8 +17,10 @@ func parseUDP(metric string) string {
 	x = strings.TrimSuffix(x, "]]")
 
 	args := strings.Split(x, ",")
-
-	return strings.ReplaceAll(args[0], "\"", "") + "." + strings.ReplaceAll(strings.ReplaceAll(args[1], "\"", ""), " ", "") + args[2] + strings.ReplaceAll(args[3], "\n", "")
+	return strings.ReplaceAll(strings.ReplaceAll(args[1], "\"", ""), " ", "") + args[2] + " " + strings.ReplaceAll(args[3], "\n", "")
+	// return strings.ReplaceAll(args[0], "\"", "") + "." + strings.ReplaceAll(strings.ReplaceAll(args[1], "\"", ""), " ", "") + args[2] + " " + strings.ReplaceAll(args[3], "\n", "")
+	// return strings.ReplaceAll(args[0], "\"", "") + "." + strings.ReplaceAll(strings.ReplaceAll(args[1], "\"", ""), " ", "") + args[2] + " " + strconv.FormatInt(time.Now().Unix(), 10)
+	// return strings.ReplaceAll(args[0], "\"", "") + "." + strings.ReplaceAll(strings.ReplaceAll(args[0], "\"", ""), " ", "") + " " + strconv.FormatInt(time.Now().Unix(), 10) + " " + strings.ReplaceAll(args[3], "\n", "")
 }
 
 func GetMsgGenerator(protocol string) msgGenerator {

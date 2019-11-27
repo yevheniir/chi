@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/yevheniir/nanachi/src"
+	"github.com/yevheniir/chi/src"
 )
 
 var Path string
@@ -42,15 +42,21 @@ to quickly create a Cobra application.`,
 		startTime := time.Now()
 		protocol, _ := cmd.Flags().GetString("protocol")
 		address, _ := cmd.Flags().GetString("address")
+		conn, _ := cmd.Flags().GetString("connections")
 
-		c, err := net.Dial(protocol, address)
-		if err != nil {
-			fmt.Printf("Oh nooo: %v\n", err)
-			return
+		var conns []net.Conn
+		for range conn {
+			c, err := net.Dial(protocol, address)
+
+			if err != nil {
+				fmt.Printf("Oh nooo: %v\n", err)
+				return
+			}
+
+			conns = append(conns, c)
 		}
-		defer c.Close()
 
-		sender := src.GetSender(c)
+		sender := src.GetSender(conns)
 		genMessage := src.GetMsgGenerator(protocol)
 
 		count := src.ScanAndSend(args[0], sender, genMessage)
@@ -59,6 +65,10 @@ to quickly create a Cobra application.`,
 		time := float32(float32(elapsed) / float32(time.Second))
 		log.Printf("Time spended: %s", elapsed)
 		log.Printf("Metric puts/s: %f", float32(count)/time)
+
+		for _, c := range conns {
+			c.Close()
+		}
 
 	},
 }
@@ -71,6 +81,8 @@ func init() {
 	spoolCmd.Flags().StringP("protocol", "r", "tcp", "Protocol")
 
 	spoolCmd.Flags().StringP("address", "a", "localhost:2003", "Network path")
+
+	spoolCmd.Flags().StringP("connections", "c", "1", "How many connections")
 
 	// Here you will define your flags and configuration settings.
 
