@@ -47,6 +47,7 @@ to quickly create a Cobra application.`,
 		var conns []net.Conn
 		for range conn {
 			c, err := net.Dial(protocol, address)
+			fmt.Printf("Connected")
 
 			if err != nil {
 				fmt.Printf("Oh nooo: %v\n", err)
